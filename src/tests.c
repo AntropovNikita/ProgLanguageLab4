@@ -13,6 +13,7 @@
 #include <errno.h>
 #include <string.h>
 
+#define SPLIT_LINE "----------------------------------\n"
 #define HEAP_INIT_SIZE 10000
 
 
@@ -43,16 +44,24 @@ static void* malloc_test(size_t size, const uint16_t test_num, const void* heap,
 static void free_test(void* data, const void* heap, const char* data_type);
 
 /**
- * @brief Р
+ * @brief Создание заглушки-разделителя в памяти
+ * @param[in] addr Указатель на адрес в памяти
+ * @param[out] test_num Номер теста
+ * @return указатель на адрес заглушки-разделителя
 */
 static void* make_mmap(void* addr, const uint16_t test_num);
 
 void all_test()
 {
+    debug(SPLIT_LINE);
     simple_alloc_test();
+    debug(SPLIT_LINE);
     free_one_block_test();
+    debug(SPLIT_LINE);
     free_two_block_test();
+    debug(SPLIT_LINE);
     extend_heap_test();
+    debug(SPLIT_LINE);
     continue_heap_test();
 }
 
@@ -67,7 +76,7 @@ void simple_alloc_test()
 
     uint32_t* arr = malloc_test(sizeof(uint32_t)*100, test_num, heap, "массив uint32_t размера 100");
 
-    debug("Тест %d пройден\n\n", test_num);
+    debug("\nТест %d пройден\n\n", test_num);
 
     _free(arr);
     _free(data);
@@ -88,7 +97,7 @@ void free_one_block_test()
 
     free_test(arr, heap, "массив uint32_t");
 
-    debug("Тест %d пройден\n\n", test_num);
+    debug("\nТест %d пройден\n\n", test_num);
 
     _free(arr2);
     _free(data);
@@ -110,7 +119,7 @@ void free_two_block_test()
     free_test(arr, heap, "массив uint32_t");
     free_test(arr2, heap, "массив uint8_t");
 
-    debug("Тест %d пройден\n\n", test_num);
+    debug("\nТест %d пройден\n\n", test_num);
     _free(data);
 
     heap_kill(heap, HEAP_INIT_SIZE);
@@ -122,18 +131,16 @@ void extend_heap_test()
     debug("Тест %d. Расширение кучи, регионы идут последовательно\n", test_num);
 
     void* heap = heap_init_test(HEAP_INIT_SIZE, test_num);
-
-    debug("Куча в начале:\n");
-    debug_heap(stderr, heap);
+    
     uint32_t* arr = malloc_test(sizeof(uint32_t)*3500, test_num, heap, "массив uint32_t размера 3500");
     uint8_t* arr2 = malloc_test(sizeof(uint8_t)*100, test_num, heap, "массив uint8_t размера 100");
 
     _free(arr2);
     _free(arr);
-    debug("Куча после освобождения памяти:\n");
+    debug("\nКуча после освобождения памяти:\n");
     debug_heap(stderr, heap);
 
-    debug("Тест %d пройден\n\n", test_num);
+    debug("\nТест %d пройден\n\n", test_num);
 
     heap_kill(heap, 28655);
 }
@@ -148,13 +155,13 @@ void continue_heap_test()
     struct block_header* header = (struct block_header*) HEAP_START;
     void* split_mem = make_mmap((void*) (header->contents + header->capacity.bytes), test_num);
     
-    int8_t* arr = malloc_test(sizeof(uint8_t)*1000000, test_num, heap, "массив uint8_t размера 100");
+    int8_t* arr = malloc_test(sizeof(uint8_t)*1000000, test_num, heap, "массив uint8_t размера 1000000");
     _free(arr);
 
-    debug("Куча после освобождения памяти:\n");
+    debug("\nКуча после освобождения памяти:\n");
     debug_heap(stderr, heap);
 
-    debug("Тест %d пройден\n\n", test_num);
+    debug("\nТест %d пройден\n\n", test_num);
 
     heap_kill(heap, 10000);
     heap_kill(split_mem, 200000);
@@ -162,10 +169,10 @@ void continue_heap_test()
 
 static void* heap_init_test(size_t size, const uint16_t test_num)
 {
-    debug("Инициализация кучи с размером %d. Результат:\n", HEAP_INIT_SIZE);
+    debug("\nИнициализация кучи с размером %d. Результат:\n", HEAP_INIT_SIZE);
     void* heap = heap_init(size);
     if (heap == NULL)
-        err("Ошибка: Не удалось инициализировать кучу. Тест %d не пройден\n", test_num);
+        err("\nОшибка: Не удалось инициализировать кучу. Тест %d не пройден\n", test_num);
     debug_heap(stderr, heap);
 
     return heap;
@@ -173,10 +180,10 @@ static void* heap_init_test(size_t size, const uint16_t test_num)
 
 static void* malloc_test(size_t size, const uint16_t test_num, const void* heap, const char* data_type)
 {
-    debug("Выделение памяти под %s. Результат:\n", data_type);
+    debug("\nВыделение памяти под %s. Результат:\n", data_type);
     void* data = _malloc(size);
     if (data == NULL)
-        err("Ошибка: Не удалось выделить память. Тест %d не пройден\n", test_num);
+        err("\nОшибка: Не удалось выделить память. Тест %d не пройден\n", test_num);
     debug_heap(stderr, heap);
 
     return data;
@@ -184,7 +191,7 @@ static void* malloc_test(size_t size, const uint16_t test_num, const void* heap,
 
 static void free_test(void* data, const void* heap, const char* data_type)
 {
-    debug("Освобождение памяти под %s. Результат:\n", data_type);
+    debug("\nОсвобождение памяти под %s. Результат:\n", data_type);
     _free(data);
     debug_heap(stderr, heap);
 }
@@ -194,7 +201,7 @@ static void* make_mmap(void* addr, const uint16_t test_num)
     void* split_page =  mmap( addr, REGION_MIN_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0 );
     debug("%s\n", strerror(errno));
     if (split_page == MAP_FAILED)
-        err("Ошибка: не удалось выделить память под заглушку-разделитель. Тест %d не пройден\n", test_num);
+        err("\nОшибка: не удалось выделить память под заглушку-разделитель. Тест %d не пройден\n", test_num);
 
     addr = split_page;
     *((struct block_header*)split_page) = (struct block_header) {
