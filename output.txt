@@ -158,3 +158,163 @@ Success
 
 Тест 5 пройден
 
+----------------------------------
+Тест 1. Обычное выделение памяти
+
+Инициализация кучи с размером 10000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+
+Выделение памяти под uint16_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029      12230     free   0000
+
+Выделение памяти под массив uint32_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400    taken   0000
+ 0x40401ca      11813     free   0000
+
+Тест 1 пройден
+
+----------------------------------
+Тест 2. Освобождение одного блока из нескольких выделенных
+
+Инициализация кучи с размером 10000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+
+Выделение памяти под uint16_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029      12230     free   0000
+
+Выделение памяти под массив uint32_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400    taken   0000
+ 0x40401ca      11813     free   0000
+
+Выделение памяти под массив uint8_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400    taken   0000
+ 0x40401ca        100    taken   0000
+ 0x404023f      11696     free   0000
+
+Освобождение памяти под массив uint32_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400     free   0000
+ 0x40401ca        100    taken   0000
+ 0x404023f      11696     free   0000
+
+Тест 2 пройден
+
+----------------------------------
+Тест 3. Освобождение двух блоков из нескольких выделенных
+
+Инициализация кучи с размером 10000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+
+Выделение памяти под uint16_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029      12230     free   0000
+
+Выделение памяти под массив uint32_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400    taken   0000
+ 0x40401ca      11813     free   0000
+
+Выделение памяти под массив uint8_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400    taken   0000
+ 0x40401ca        100    taken   0000
+ 0x404023f      11696     free   0000
+
+Освобождение памяти под массив uint32_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400     free   0000
+ 0x40401ca        100    taken   0000
+ 0x404023f      11696     free   0000
+
+Освобождение памяти под массив uint8_t. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000         24    taken   0000
+ 0x4040029        400     free   0000
+ 0x40401ca      11813     free   0000
+
+Тест 3 пройден
+
+----------------------------------
+Тест 4. Расширение кучи, регионы идут последовательно
+
+Инициализация кучи с размером 10000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+
+Выделение памяти под массив uint32_t размера 3500. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      14000    taken   0000
+ 0x40436c1      14638     free   0000
+
+Выделение памяти под массив uint8_t размера 100. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      14000    taken   0000
+ 0x40436c1        100    taken   0000
+ 0x4043736      14521     free   0000
+
+Куча после освобождения памяти:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      28655     free   0000
+
+Тест 4 пройден
+
+----------------------------------
+Тест 5. Расширение кучи, регионы идут не последовательно
+
+Инициализация кучи с размером 10000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+Success
+
+Выделение памяти под массив uint8_t размера 1000000. Результат:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+0x7f20935af000    1000000    taken   0000
+0x7f20936a3251       3486     free   0000
+
+Куча после освобождения памяти:
+ --- Heap ---
+     start   capacity   status   contents
+ 0x4040000      12271     free   0000
+0x7f20935af000    1003503     free   0000
+
+Тест 5 пройден
+
