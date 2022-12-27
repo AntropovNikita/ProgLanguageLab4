@@ -1,12 +1,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "mem_internals.h"
-#include "mem.h"
+#include "mem_debug.h"
 
-void debug_struct_info( FILE* f,
-                                 void const* addr ) {
 
+void debug_struct_info( FILE* f, void const* addr ) 
+{
   struct block_header const* header =  addr;
   fprintf( f,
            "%10p %10zu %8s   ",
@@ -20,14 +19,16 @@ void debug_struct_info( FILE* f,
 }
 
 
-void debug_heap( FILE* f,  void const* ptr ) {
+void debug_heap( FILE* f,  void const* ptr ) 
+{
   fprintf( f, " --- Heap ---\n");
   fprintf( f, "%10s %10s %8s %10s\n", "start", "capacity", "status", "contents" );
   for(struct block_header const* header =  ptr; header; header = header ->next )
     debug_struct_info( f, header );
 }
 
-void debug_block(struct block_header* b, const char* fmt, ... ) {
+void debug_block(struct block_header* b, const char* fmt, ... ) 
+{
   #ifdef DEBUG
 
   va_list args;
@@ -41,7 +42,8 @@ void debug_block(struct block_header* b, const char* fmt, ... ) {
   #endif
 }
 
-void debug(const char* fmt, ... ) {
+void debug(const char* fmt, ... ) 
+{
 #ifdef DEBUG
 
   va_list args;
