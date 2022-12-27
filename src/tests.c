@@ -10,9 +10,6 @@
 #include "mem.h"
 #include "mem_debug.h"
 
-#include <errno.h>
-#include <string.h>
-
 #define SPLIT_LINE "----------------------------------\n"
 #define HEAP_INIT_SIZE 10000
 
@@ -199,7 +196,6 @@ static void free_test(void* data, const void* heap, const char* data_type)
 static void* make_mmap(void* addr, const uint16_t test_num)
 {
     void* split_page =  mmap( addr, REGION_MIN_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0 );
-    debug("%s\n", strerror(errno));
     if (split_page == MAP_FAILED)
         err("\nОшибка: не удалось выделить память под заглушку-разделитель. Тест %d не пройден\n", test_num);
 
