@@ -135,7 +135,7 @@ void heap_kill(void* heap, size_t size)
 */
 static bool block_splittable( struct block_header* restrict block, size_t query)
 {
-  return block-> is_free && query + offsetof( struct block_header, contents ) + BLOCK_MIN_CAPACITY <= block->capacity.bytes;
+  return block && block-> is_free && query + offsetof( struct block_header, contents ) + BLOCK_MIN_CAPACITY <= block->capacity.bytes;
 }
 
 /**
@@ -173,7 +173,7 @@ static void* block_after( struct block_header const* block )
  * @param[in] snd Указатель на структуру второго блока
  * @return true, если второй блок идет после первого, иначе false
 */
-static bool blocks_continuous ( struct block_header const* fst, struct block_header const* snd ) 
+static bool blocks_continuous ( struct block_header const* restrict fst, struct block_header const* restrict snd ) 
 {
   return (void*)snd == block_after(fst);
 }
@@ -186,7 +186,7 @@ static bool blocks_continuous ( struct block_header const* fst, struct block_hea
 */
 static bool mergeable(struct block_header const* restrict fst, struct block_header const* restrict snd) 
 {
-  return fst->is_free && snd->is_free && blocks_continuous( fst, snd ) ;
+  return fst && snd && fst->is_free && snd->is_free && blocks_continuous( fst, snd ) ;
 }
 
 /**
